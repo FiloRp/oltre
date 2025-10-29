@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Modello per gli utenti che possono accedere al sistema
+/// Include sia i clienti (USER) che gli amministratori (ADMIN)
+model User {
+  id        String    @id @default(cuid())
+  name      String?
+  email     String    @unique
+  password  String    /// La password sarà sempre hashata, mai in chiaro
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  bookings Booking[] /// Un utente può avere molte prenotazioni
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+/// Modello principale per un Viaggio (es. "Giappone: The Land of the Rising Sun")
+/// Contiene tutte le informazioni descrittive generali
+model Trip {
+  id                String    @id @default(cuid())
+  title             String
+  slug              String    @unique /// URL-friendly ID, es. "giappone-terra-del-sol-levante"
+  status            TripStatus @default(DRAFT)
+  country           String
+  heroImage         String    /// URL dell'immagine di copertina
+  shortDescription  String    @db.Text
+  
+  /// Contenuti della pagina, salvati come JSON per flessibilità
+  /// Alternativa più complessa: modelli separati per ProgramDay, FaqItem, etc.
+  program           Json?     /// Es: [{ "title": "Giorno 1", "description": "..." }]
+  faq               Json?     /// Es: [{ "question": "...", "answer": "..." }]
+  
+  includes          String?   @db.Text
+  notIncludes       String?   @db.Text
+  
+  galleryImages     String[]  /// Un array di URL per le immagini della galleria
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  departures Departure[] /// Un viaggio ha molte partenze (date diverse)
+  reviews    Review[]    /// Un viaggio ha molte recensioni
+  
+  /// Relazione Molti-a-Molti con i membri del team (guide)
+  ledBy      TeamMember[]
+}
+
+enum TripStatus {
+  DRAFT
+  PUBLISHED
+}
+
+/// Rappresenta una specifica data di partenza per un Viaggio
+model Departure {
+  id          String   @id @default(cuid())
+  startDate   DateTime
+  endDate     DateTime
+  price       Float    /// Prezzo base per persona
+  totalSeats  Int
+  status      DepartureStatus @default(AVAILABLE)
+
+  tripId      String
+  trip        Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  
+  bookings    Booking[] /// Una partenza può avere molte prenotazioni
+}
+
+enum DepartureStatus {
+  AVAILABLE // Posti disponibili
+  CONFIRMED // Viaggio confermato
+  SOLD_OUT  // Esaurito
+}
+
+/// Una singola prenotazione, legata a un utente e a una partenza
+model Booking {
+  id                String    @id @default(cuid())
+  contactName       String
+  contactEmail      String
+  contactPhone      String
+  
+  // Dati di fatturazione
+  billingAddress    String
+  billingZipCode    String
+  billingCity       String
+  billingProvince   String
+  billingCountry    String
+  billingFiscalCode String
+  isAgency          Boolean   @default(false)
+  agencyDetails     Json?     // P.IVA, PEC, Codice Destinatario se è un'agenzia
+  
+  specialRequests   String?   @db.Text
+  totalAmount       Float     /// Prezzo finale calcolato
+  status            String    @default("PENDING_PAYMENT") // Es: PENDING_PAYMENT, CONFIRMED, CANCELLED
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  departureId       String
+  departure         Departure @relation(fields: [departureId], references: [id])
+
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+
+  passengers        Passenger[] /// Una prenotazione è composta da uno o più passeggeri
+}
+
+/// Dati di un singolo passeggero all'interno di una prenotazione
+model Passenger {
+  id                  String   @id @default(cuid())
+  firstName           String
+  lastName            String
+  birthDate           DateTime
+  nationality         String
+  fiscalCode          String?
+  
+  documentPhotoUrl    String?   /// URL del documento caricato su S3/Vercel Blob
+  hasExtraInsurance   Boolean   @default(false)
+
+  bookingId           String
+  booking             Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+/// Modello per i contenuti della pagina "Chi Siamo" / Team
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String   /// Es. "Tour Leader", "Fondatore"
+  photoUrl  String
+  bio       String?  @db.Text
+
+  trips     Trip[]   /// Viaggi che questo membro del team può guidare
+}
+
+/// Modello per le recensioni
+model Review {
+  id            String   @id @default(cuid())
+  userName      String
+  userAge       Int?
+  reviewText    String   @db.Text
+  trustpilotUrl String?
+
+  tripId        String
+  trip          Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+}
