@@ -3,9 +3,8 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useState, useEffect } from "react"; // Importa useState e useEffect
+import { useState, useEffect } from "react";
 
-// La toolbar rimane la stessa
 const EditorToolbar = ({ editor }: { editor: any }) => {
   if (!editor) return null;
   return (
@@ -23,10 +22,13 @@ interface RichTextEditorProps {
 }
 
 export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
-  // --- NUOVA LOGICA DI RENDERING CONDIZIONALE ---
   const [isMounted, setIsMounted] = useState(false);
 
   const editor = useEditor({
+    // --- LA MODIFICA CHIAVE È QUI ---
+    immediatelyRender: false, // Dice a Tiptap di non fare nulla finché non è pronto
+    // --------------------------------
+
     extensions: [StarterKit],
     content: value,
     editorProps: {
@@ -40,17 +42,15 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   });
 
   useEffect(() => {
-    // Appena il componente è montato nel browser, imposta lo stato a true
     setIsMounted(true);
   }, []);
 
-  // Se non siamo ancora nel browser, non renderizzare nulla (o un loader)
-  if (!isMounted) {
+  // Questa parte rimane fondamentale come rete di sicurezza
+  if (!isMounted || !editor) {
     return <div className="min-h-[210px] border rounded-lg bg-gray-100 animate-pulse"></div>;
   }
-  // ------------------------------------------------
 
-  // Questo JSX verrà renderizzato solo dopo che isMounted è diventato true
+  // Ora che siamo sicuri di essere nel client, possiamo renderizzare
   return (
     <div className="flex flex-col">
       <EditorToolbar editor={editor} />

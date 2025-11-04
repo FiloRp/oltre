@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 // 1. Importa 'Inter' invece di 'Geist'
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
 // 2. Inizializza il font Inter
 const inter = Inter({ subsets: ["latin"] });
@@ -19,8 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it">
-      {/* 3. Applica la classe del font Inter al body */}
-      <body className={inter.className}>{children}</body>
+      <body className={cn(
+        "min-h-screen bg-background font-sans antialiased",
+        inter.className
+      )}>
+        {children}
+      </body>
     </html>
   );
 }

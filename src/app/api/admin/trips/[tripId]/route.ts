@@ -15,13 +15,23 @@ const tripUpdateSchema = z.object({
       description: z.string(),
     })
   ).optional(),
+  status: z.enum(["DRAFT", "PUBLISHED"]),
+  includes: z.string().optional(),
+  notIncludes: z.string().optional(),
+  faq: z.array(
+    z.object({
+      question: z.string(),
+      answer: z.string(),
+    })
+  ).optional(),
+  galleryImages: z.array(z.string()).optional(),
 });
 
 interface RouteContext {
   params: { tripId: string }; // Non più una Promise
 }
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+export async function PATCH(request: Request, { params }: { params: { tripId: string } }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user || session.user.role !== "ADMIN") {
@@ -39,17 +49,23 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   }
 
   // Destruttura anche il programma
-  const { title, country, shortDescription, program } = parsedData.data;
+  const { title, country, shortDescription, program, status, includes, notIncludes, faq, galleryImages } = parsedData.data;
   const slug = title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
 
-  const updatedTrip = await prisma.trip.update({
-    where: { id: tripId },
+
+  const updatedTrip = await prisma.trip.update({ 
+    where: { id: params.tripId },
     data: {
       title,
       country,
       shortDescription,
       slug,
       program: program || [], // Salva il programma (o un array vuoto se non presente)
+      status,
+      includes,
+      notIncludes,
+      faq: faq || [],
+      galleryImages: galleryImages || [],
     },
   });
 
