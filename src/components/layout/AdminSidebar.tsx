@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Plane, BookOpen } from "lucide-react"; // Icone per la UI
+import { Home, Plane, BookOpen, Users, Settings, Star } from "lucide-react"; // Icone per la UI
 
 // Funzione helper per classi condizionali
 function cn(...classes: string[]) {
@@ -14,9 +14,13 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: "/dashboard", label: "Dashboard", icon: Home },
-    { href: "/viaggi", label: "Viaggi", icon: Plane },
-    { href: "/prenotazioni", label: "Prenotazioni", icon: BookOpen },
+    { href: "/admin/dashboard", label: "Dashboard", icon: Home },
+    { href: "/admin/viaggi", label: "Viaggi", icon: Plane },
+    { href: "/admin/prenotazioni", label: "Prenotazioni", icon: BookOpen },
+    { href: "/admin/team", label: "Team", icon: Users },
+    { href: "/admin/reviews", label: "Recensioni", icon: Star },
+    { href: "/admin/impostazioni", label: "Impostazioni", icon: Settings }, 
+
   ];
 
   return (

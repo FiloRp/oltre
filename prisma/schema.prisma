@@ -52,6 +52,9 @@ model Trip {
   
   galleryImages     String[]  /// Un array di URL per le immagini della galleria
 
+  mapLatitude  Float?
+  mapLongitude Float?
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -65,6 +68,7 @@ model Trip {
 enum TripStatus {
   DRAFT
   PUBLISHED
+  ARCHIVED 
 }
 
 /// Rappresenta una specifica data di partenza per un Viaggio
@@ -74,18 +78,23 @@ model Departure {
   endDate     DateTime
   price       Float    /// Prezzo base per persona
   totalSeats  Int
+  availableSeats  Int?
   status      DepartureStatus @default(AVAILABLE)
+  coordinatorId String?
 
   tripId      String
   trip        Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
   
   bookings    Booking[] /// Una partenza può avere molte prenotazioni
+  coordinator   TeamMember? @relation(fields: [coordinatorId], references: [id])
 }
 
 enum DepartureStatus {
   AVAILABLE // Posti disponibili
   CONFIRMED // Viaggio confermato
   SOLD_OUT  // Esaurito
+  ARCHIVED // Archiviato
+  
 }
 
 /// Una singola prenotazione, legata a un utente e a una partenza
@@ -146,16 +155,33 @@ model TeamMember {
   bio       String?  @db.Text
 
   trips     Trip[]   /// Viaggi che questo membro del team può guidare
+  ledDepartures Departure[]
 }
 
 /// Modello per le recensioni
 model Review {
   id            String   @id @default(cuid())
-  userName      String
-  userAge       Int?
+  userName      String   // Nome dell'utente che ha lasciato la recensione
+  userPhotoUrl  String?  // URL della foto dell'utente (opzionale)
   reviewText    String   @db.Text
-  trustpilotUrl String?
-
+  trustpilotUrl String?  // Link alla recensione su Trustpilot (opzionale)
+  rating        Int
+  
   tripId        String
   trip          Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime @default(now()) // Aggiungiamo un timestamp
+}
+
+model Settings {
+  id          String @id @default("main") // Usiamo un ID fisso per avere una sola riga
+  homeHeroUrl String?
+}
+
+model HomeCarouselImage {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  altText   String?
+  order     Int      @default(0) // Per gestire l'ordine di visualizzazione
+  createdAt DateTime @default(now())
 }

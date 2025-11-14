@@ -1,8 +1,6 @@
 // src/lib/prisma.ts
 import { PrismaClient } from '@prisma/client'; // Import standard
 
-console.log("DATABASE_URL IN USO:", process.env.DATABASE_URL);
-
 declare global {
   var prisma: PrismaClient | undefined;
 }

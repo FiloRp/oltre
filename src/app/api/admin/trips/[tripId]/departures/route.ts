@@ -5,38 +5,53 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
+// Schema completo per i dati in entrata
+const departureSchema = z.object({
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
+  price: z.coerce.number().min(0),
+  totalSeats: z.coerce.number().int().min(1),
+  coordinatorId: z.string().nullable().optional(),
+  status: z.enum(["AVAILABLE", "CONFIRMED", "SOLD_OUT", "ARCHIVED"]),
+  availableSeats: z.coerce.number().int().nullable().optional(),
+});
 
 interface RouteContext {
-    params: Promise<{ tripId: string }>;
+  params: {
+    tripId: string;
+  };
 }
 
-export async function POST(request: Request, { params: paramsPromise }: RouteContext) {
-    try {
-        const session = await getServerSession(authOptions);
-        if (!session?.user || session.user.role !== 'ADMIN') {
-            return NextResponse.json({ error: 'Non autorizzato' }, { status: 403 });
-        }
-        
-        const departureSchema = z.object({
-          startDate: z.coerce.date(),
-          endDate: z.coerce.date(),
-          price: z.coerce.number().min(0, 'Il prezzo non può essere negativo'),
-          totalSeats: z.coerce.number().int().min(1, 'Ci deve essere almeno un posto'),
-        });
-        
-        const { tripId } = await paramsPromise;
-        const body = await request.json();
-        const parsedData = departureSchema.safeParse(body);
-        
-        if (!parsedData.success) {
-            return NextResponse.json({ error: parsedData.error }, { status: 400 });
-        }
-        
+export async function POST(request: Request, { params }: RouteContext) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user || session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Non autorizzato' }, { status: 403 });
+    }
+
+    const { tripId } = params;
+    const body = await request.json();
+    const parsedData = departureSchema.safeParse(body);
+
+    if (!parsedData.success) {
+      return NextResponse.json({ error: parsedData.error.format() }, { status: 400 });
+    }
+
+    const { startDate, endDate, price, totalSeats, status, coordinatorId, availableSeats  } = parsedData.data;
+
+    const dataToSave = {
+      startDate,
+      endDate,
+      price,
+      totalSeats,
+      status,
+      tripId: tripId,
+      coordinatorId: coordinatorId === 'none' ? null : coordinatorId,
+      availableSeats
+    };
+
     const newDeparture = await prisma.departure.create({
-      data: {
-        ...parsedData.data,
-        tripId: tripId,
-      },
+      data: dataToSave,
     });
 
     return NextResponse.json(newDeparture, { status: 201 });

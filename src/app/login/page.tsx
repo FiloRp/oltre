@@ -27,7 +27,7 @@ export default function LoginPage() {
         console.error(result.error);
       } else if (result?.ok) {
         // Login riuscito, reindirizza alla dashboard
-        router.push("/dashboard");
+        router.push("/admin/dashboard");
       }
     } catch (error) {
       setError("Si è verificato un errore. Riprova.");

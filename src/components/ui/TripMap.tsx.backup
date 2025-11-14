@@ -1,0 +1,67 @@
+// src/components/ui/TripMap.tsx
+"use client";
+
+import 'leaflet/dist/leaflet.css'; // CSS per primo
+import { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+
+// Fix per l'icona del marker
+const icon = L.icon({
+    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    iconSize: [25, 41], // Dimensioni esplicite
+    iconAnchor: [12, 41], // Punto di ancoraggio
+    popupAnchor: [1, -34],
+});
+
+interface TripMapProps {
+  latitude: number;
+  longitude: number;
+  tripTitle: string;
+}
+
+export function TripMap({ latitude, longitude, tripTitle }: TripMapProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    // Ritarda leggermente il rendering per assicurarsi che il DOM sia pronto
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <div className="h-[400px] w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
+        Caricamento mappa...
+      </div>
+    );
+  }
+
+  // Controllo di sicurezza sui dati
+  if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+    return <div className="h-[400px] w-full bg-gray-100 rounded-lg flex items-center justify-center text-red-500">Coordinate non valide</div>;
+  }
+
+  return (
+    <div style={{ height: '400px', width: '100%', position: 'relative' }}>
+       <MapContainer
+         key={`${latitude}-${longitude}`} // Forza il re-rendering se cambiano le coordinate
+         center={[latitude, longitude]}
+         zoom={13}
+         scrollWheelZoom={false}
+         style={{ height: '100%', width: '100%' }}
+       >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[latitude, longitude]} icon={icon}>
+          <Popup>{tripTitle}</Popup>
+        </Marker>
+      </MapContainer>
+    </div>
+  );
+}
