@@ -4,6 +4,7 @@ import { Trip, Departure, TeamMember } from '@prisma/client';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
 
 // Le props ora possono ricevere o un 'trip' o una 'departure'
 interface TripCardProps {
@@ -14,44 +15,21 @@ interface TripCardProps {
 export function TripCard({ trip, departure }: TripCardProps) {
   return (
     <Link href={`/destinazioni/${trip.slug}`}>
-      <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow">
-        <CardHeader className="p-0 relative">
-          <img
-            src={trip.heroImage || 'https://via.placeholder.com/400x225'}
-            alt={trip.title}
-            className="w-full h-48 object-cover"
-          />
-          {/* Mostra la data solo se la prop 'departure' è presente */}
-          {departure && (
-            <div className="absolute bottom-0 left-0 bg-black/60 text-white p-2 text-sm font-semibold">
-              {format(new Date(departure.startDate), 'dd MMM yyyy')}
-            </div>
-          )}
-          {departure?.coordinator && (
-            <div className="absolute top-2 right-2">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <img src={departure.coordinator.photoUrl} alt={departure.coordinator.name} className="h-10 w-10 rounded-full object-cover border-2 border-white" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Coordinatore: {departure.coordinator.name}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          )}
+      <Card className="rounded-3xl shadow-lg hover:shadow-2xl transition-shadow duration-300 h-full flex flex-col">
+        <CardHeader className="p-0">
+          <img src={trip.heroImage || '...'} alt={trip.title} className="w-full h-56 object-cover rounded-t-3xl" />
         </CardHeader>
-        <CardContent className="p-4 flex-grow">
-          <CardTitle className="text-xl mb-2">{trip.title}</CardTitle>
-          <p className="text-sm text-gray-600">{trip.shortDescription}</p>
-        </CardContent>
-        <CardFooter className="p-4 flex justify-between items-center">
-          <p className="font-semibold">Scopri di più</p>
-          {/* Mostra il prezzo solo se la prop 'departure' è presente */}
+        <CardContent className="p-6 flex-grow">
+          <CardTitle className="text-2xl font-heading font-bold text-[--foreground] mb-2">{trip.title}</CardTitle>
+          <p className="text-gray-600 line-clamp-2">{trip.shortDescription}</p>
           {departure && (
-            <p className="text-lg font-bold">€{departure.price}</p>
+            <div className="flex items-center gap-4 mt-4 text-sm text-gray-700">
+              <span>✈️ {format(new Date(departure.startDate), 'dd MMM')} - {format(new Date(departure.endDate), 'dd MMM yyyy')}</span>
+            </div>
           )}
+        </CardContent>
+        <CardFooter className="p-6 pt-0">
+          <p className="text-2xl font-bold text-[--foreground]">{departure ? `€${departure.price}` : 'Scopri'}</p>
         </CardFooter>
       </Card>
     </Link>

@@ -8,7 +8,7 @@ export default function PrenotazioneSuccessoPage() {
     <div className="container flex items-center justify-center py-20">
       <div className="text-center max-w-2xl">
         <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
-        <h1 className="text-4xl font-bold">Grazie per la tua prenotazione!</h1>
+        <h1 className="font-heading text-4xl font-bold">Grazie per la tua prenotazione!</h1>
         <p className="mt-4 text-lg text-gray-600">
           Abbiamo ricevuto correttamente la tua richiesta. A breve riceverai un'email di riepilogo con tutti i dettagli e le istruzioni per i prossimi passi.
         </p>

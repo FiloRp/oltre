@@ -11,9 +11,9 @@ export function Header() {
             OLTRE
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link href="/">Home</Link>
-            <Link href="/chi-siamo">Chi Siamo</Link>
-            <Link href="/destinazioni">Destinazioni</Link>
+            <Link href="/" className="transition-colors hover:text-foreground/80 text-foreground/60">Home</Link>
+            <Link href="/chi-siamo" className="transition-colors hover:text-foreground/80 text-foreground/60">Chi Siamo</Link>
+            <Link href="/destinazioni" className="transition-colors hover:text-foreground/80 text-foreground/60">Destinazioni</Link>
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">

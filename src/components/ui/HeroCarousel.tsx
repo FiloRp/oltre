@@ -2,14 +2,11 @@
 "use client";
 
 import * as React from "react";
-// 1. Importa il plugin che abbiamo appena installato
 import Autoplay from "embla-carousel-autoplay";
 import { HomeCarouselImage } from "@prisma/client";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface HeroCarouselProps {
   images: HomeCarouselImage[];
@@ -26,37 +23,40 @@ export function HeroCarousel({ images }: HeroCarouselProps) {
   if (!images || images.length === 0) {
     return (
       <section className="h-[60vh] bg-gray-800 flex items-center justify-center text-white">
-        <h1 className="text-4xl font-bold">Oltre Viaggi</h1>
+        <h1 className="font-heading text-4xl font-bold">Oltre Viaggi</h1>
       </section>
     );
   }
 
-  return (
-    <Carousel
-      // 3. Passa il plugin al componente Carousel
-      plugins={[plugin.current]}
-      className="w-full"
-      // 4. (Opzionale ma consigliato) Metti in pausa l'autoplay al passaggio del mouse
-      onMouseEnter={plugin.current.stop}
-      onMouseLeave={plugin.current.reset}
-    >
-      <CarouselContent>
-        {images.map((image) => (
-          <CarouselItem key={image.id}>
-            <div className="relative h-[60vh] w-full">
-              <img src={image.imageUrl} alt={image.altText || "Hero image"} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <div className="text-center">
-                  <h1 className="text-white text-4xl md:text-6xl font-bold">
-                    LOREM IPSUM DOLOR SIT
-                  </h1>
-                  <p className="text-white text-lg mt-2">Lorem ipsum dolor sit amet consectetur.</p>
-                </div>
-              </div>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-    </Carousel>
+ return (
+    <section className="relative h-[80vh] md:h-[90vh] text-white">
+      <Carousel plugins={[plugin.current]} className="w-full h-full">
+        <CarouselContent className="h-full">
+          {images.map((image) => (
+            <CarouselItem key={image.id} className="h-full">
+              <img src={image.imageUrl} alt={image.altText || ""} className="w-full h-full object-cover" />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+      
+      {/* Overlay e Contenuto Fisso */}
+      <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center p-4">
+        <h1 className="font-heading font-extrabold text-4xl md:text-6xl lg:text-7xl tracking-tight">
+          {images[0]?.title || "LOREM IPSUM DOLOR SIT"}
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg md:text-xl text-gray-200">
+          {images[0]?.subtitle || "Lorem ipsum dolor sit amet consectetur."}
+        </p>
+        <div className="mt-8 flex gap-4">
+          <Button asChild size="lg" className="bg-white text-black hover:bg-gray-200">
+            <Link href="/destinazioni">Scopri i Viaggi</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
+            <Link href="/chi-siamo">Chi Siamo</Link>
+          </Button>
+        </div>
+      </div>
+    </section>
   );
 }

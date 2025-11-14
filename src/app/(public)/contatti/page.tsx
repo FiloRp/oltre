@@ -3,7 +3,7 @@ export default function ContattiPage() {
   return (
     <div className="container py-16">
       <div className="text-center max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold">Contattaci</h1>
+        <h1 className="font-heading text-4xl font-bold">Contattaci</h1>
         <p className="mt-4 text-lg text-gray-600">
           Hai domande, dubbi o vuoi semplicemente salutarci? Siamo qui per aiutarti. Scegli il modo che preferisci per metterti in contatto con noi.
         </p>

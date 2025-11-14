@@ -166,7 +166,8 @@ model Review {
   reviewText    String   @db.Text
   trustpilotUrl String?  // Link alla recensione su Trustpilot (opzionale)
   rating        Int
-  
+  isFeatured    Boolean  @default(false)
+
   tripId        String
   trip          Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
   
@@ -182,6 +183,9 @@ model HomeCarouselImage {
   id        String   @id @default(cuid())
   imageUrl  String
   altText   String?
-  order     Int      @default(0) // Per gestire l'ordine di visualizzazione
+  title     String?
+  subtitle  String?
+  // -----------------------------
+  order     Int      @default(0)
   createdAt DateTime @default(now())
 }

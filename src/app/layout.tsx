@@ -1,16 +1,15 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
-// 1. Importa 'Inter' invece di 'Geist'
-import { Inter } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-// 2. Inizializza il font Inter
-const inter = Inter({ subsets: ["latin"] });
+const fontSans = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const fontHeading = Montserrat({ subsets: ["latin"], variable: "--font-heading", weight: ['700', '800'] });
 
 export const metadata: Metadata = {
-  title: "Oltre Travel", // Puoi personalizzare il titolo
-  description: "Viaggi e avventure organizzate", // E la descrizione
+  title: "Oltre Viaggi",
+  description: "Viaggi che lasciano il segno",
 };
 
 export default function RootLayout({
@@ -19,11 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it">
-      <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
-        inter.className
-      )}>
+    <html lang="it" suppressHydrationWarning>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable, fontHeading.variable
+        )}
+      >
         {children}
       </body>
     </html>

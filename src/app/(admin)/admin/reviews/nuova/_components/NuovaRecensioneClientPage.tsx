@@ -36,7 +36,7 @@ export function NuovaRecensioneClientPage({ trips }: NuovaRecensioneClientPagePr
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Aggiungi Nuova Recensione</h1>
+      <h1 className="font-heading text-3xl font-bold mb-6">Aggiungi Nuova Recensione</h1>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <ReviewForm trips={trips} onSave={handleSave} isLoading={isLoading} />
     </div>

@@ -46,7 +46,7 @@ export default async function BookingDetailPage({ params: paramsPromise }: Booki
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Dettaglio Prenotazione #{booking.id.substring(0, 8)}</h1>
+        <h1 className="font-heading text-3xl font-bold">Dettaglio Prenotazione #{booking.id.substring(0, 8)}</h1>
         <p className="text-gray-500">Ricevuta il {format(new Date(booking.createdAt), 'dd MMMM yyyy, HH:mm')}</p>
       </div>
 

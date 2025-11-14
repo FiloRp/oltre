@@ -17,7 +17,7 @@ export default async function EditTeamMemberPage({ params: paramsPromise }: Edit
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Modifica Membro del Team</h1>
+      <h1 className="font-heading text-3xl font-bold mb-6">Modifica Membro del Team</h1>
       <EditTeamMemberClientPage member={member} />
     </div>
   );

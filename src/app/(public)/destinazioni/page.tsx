@@ -35,7 +35,7 @@ export default async function DestinazioniPage() {
   return (
     <div className="container py-12">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold">Tutte le Nostre Destinazioni</h1>
+        <h1 className="font-heading text-4xl font-bold">Tutte le Nostre Destinazioni</h1>
         <p className="mt-2 text-lg text-gray-600">Scopri l'avventura che fa per te.</p>
       </div>
 

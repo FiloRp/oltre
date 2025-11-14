@@ -17,7 +17,7 @@ export default async function TeamPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Gestione Team</h1>
+        <h1 className="font-heading text-3xl font-bold">Gestione Team</h1>
         <Button asChild>
           <Link href="/admin/team/nuovo">Aggiungi Membro</Link>
         </Button>

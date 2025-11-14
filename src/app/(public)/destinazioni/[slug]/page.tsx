@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ReviewCard } from '@/components/ui/ReviewCard';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
+import { TripGallery } from '../_components/TripGallery'
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -63,7 +66,7 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
         <img src={trip.heroImage || ''} alt={trip.title} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">{trip.title}</h1>
+          <h1 className="font-heading text-5xl md:text-7xl font-extrabold tracking-tight">{trip.title}</h1>
           <p className="mt-2 text-xl text-gray-200">{trip.shortDescription}</p>
         </div>
       </section>
@@ -134,7 +137,7 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
               </section>
             )}
 
-            {trip.galleryImages && trip.galleryImages.length > 0 && (
+            {/* {trip.galleryImages && trip.galleryImages.length > 0 && (
               <section>
                 <h2 className="text-3xl font-bold mb-4">Galleria</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -145,7 +148,10 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
                   ))}
                 </div>
               </section>
-            )}
+            )} */}
+						{trip.galleryImages && trip.galleryImages.length > 0 && (
+							<TripGallery images={trip.galleryImages} />
+						)}
           </div>
 
           {/* COLONNA DESTRA (Partenze e Mappa) - STICKY */}
@@ -161,34 +167,52 @@ export default async function TripDetailPage({ params }: TripDetailPageProps) {
               <div>
                 <h3 className="text-2xl font-bold mb-4">Prossime Partenze</h3>
                 <div className="space-y-4">
-									{trip.departures.length > 0 ? (
-										trip.departures.map(departure => { 
-											console.log("--- DATI PARTENZA RICEVUTI ---");
-											console.log(departure);
-											console.log("Valore di availableSeats:", departure.availableSeats);
-											console.log("--------------------------------");
-											const seatsText = formatAvailableSeats(departure.availableSeats);
+                  {trip.departures.length > 0 ? (
+                    trip.departures.map(departure => {
+                      const seatsText = formatAvailableSeats(departure.availableSeats);
 
-											return (
-												<div key={departure.id} className="border rounded-lg p-4 flex justify-between items-center shadow-sm">
-													<div>
-														<p className="font-semibold">{format(new Date(departure.startDate), 'dd MMM')} - {format(new Date(departure.endDate), 'dd MMM yyyy')}</p>
-														<p className="text-lg font-bold">€{departure.price}</p>
-														{seatsText && (
-															<p className="text-sm text-blue-600 font-semibold mt-1">{seatsText}</p>
-														)}
-													</div>
-													<Button asChild>
-														<Link href={`/prenota/${departure.id}`}>Prenota</Link>
-													</Button>
-												</div>
-											);
-										})
-									) : (
+                      return (
+                        <div key={departure.id} className="border rounded-lg p-4 shadow-sm bg-white space-y-4">
+                          {/* Parte Superiore: Date, Prezzo, Coordinatore */}
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="font-semibold text-lg">{format(new Date(departure.startDate), 'dd MMM')} - {format(new Date(departure.endDate), 'dd MMM yyyy')}</p>
+                              <p className="text-2xl font-bold">€{departure.price}</p>
+                              {seatsText && (
+                                <p className="text-sm text-blue-600 font-semibold mt-1">{seatsText}</p>
+                              )}
+                            </div>
+                            {departure.coordinator && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Link href={`/team/${departure.coordinator.id}`}>
+                                      <img src={departure.coordinator.photoUrl} alt={departure.coordinator.name} className="h-14 w-14 rounded-full object-cover" />
+                                    </Link>
+                                  </TooltipTrigger>
+                                  <TooltipContent><p>{departure.coordinator.name}</p></TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
+                          </div>
+                          {/* Parte Inferiore: Stato e Pulsante Prenota */}
+                          <div className="flex justify-between items-center pt-4 border-t">
+                            <Badge variant={departure.status === 'CONFIRMED' ? 'default' : 'secondary'}>
+                              {departure.status}
+                            </Badge>
+                            <Button asChild>
+                              <Link href={`/prenota/${departure.id}`}>Prenota</Link>
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
                     <div className="border rounded-lg p-4 text-center text-gray-500 bg-white"><p>Nessuna partenza in programma.</p></div>
                   )}
                 </div>
               </div>
+              {/* --- FINE BLOCCO PARTENZE MODIFICATO --- */}
 
             </div>
           </aside>

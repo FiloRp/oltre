@@ -17,7 +17,7 @@ export default async function ReviewsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Gestione Recensioni</h1>
+        <h1 className="font-heading text-3xl font-bold">Gestione Recensioni</h1>
         <Button asChild>
           <Link href="/admin/reviews/nuova">Aggiungi Recensione</Link>
         </Button>

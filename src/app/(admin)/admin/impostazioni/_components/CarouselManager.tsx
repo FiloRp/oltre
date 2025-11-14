@@ -7,6 +7,7 @@ import { HomeCarouselImage } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageUpload } from '../../viaggi/_components/ImageUpload';
+import { Input } from '@/components/ui/input';
 
 interface CarouselManagerProps {
   initialImages: HomeCarouselImage[];
@@ -17,11 +18,19 @@ export function CarouselManager({ initialImages }: CarouselManagerProps) {
   const [images, setImages] = useState(initialImages);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleTextChange = (id: string, field: 'title' | 'subtitle', value: string) => {
+    setImages(images.map(img => 
+      img.id === id ? { ...img, [field]: value } : img
+    ));
+  };
+
   const handleAddMultipleImages = (urls: string[]) => {
     const newImages = urls.map((url, index) => ({
       id: `new-${Date.now()}-${index}`,
       imageUrl: url,
       altText: 'Immagine carousel',
+      title: '',
+      subtitle: '',
       order: images.length + index,
       createdAt: new Date(),
     }));
@@ -35,10 +44,17 @@ export function CarouselManager({ initialImages }: CarouselManagerProps) {
   const handleSaveChanges = async () => {
     setIsLoading(true);
     try {
+      // Invia anche i nuovi campi di testo all'API
       const response = await fetch('/api/admin/settings/carousel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ images: images.map(img => ({ imageUrl: img.imageUrl })) }),
+        body: JSON.stringify({ 
+          images: images.map(img => ({ 
+            imageUrl: img.imageUrl,
+            title: img.title,
+            subtitle: img.subtitle,
+          })) 
+        }),
       });
       if (!response.ok) throw new Error('Salvataggio fallito');
       alert('Carousel salvato con successo!');
@@ -53,15 +69,25 @@ export function CarouselManager({ initialImages }: CarouselManagerProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Carousel Homepage</CardTitle>
-      </CardHeader>
+      <CardHeader><CardTitle>Carousel Homepage</CardTitle></CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="space-y-6 mb-6">
           {images.map(image => (
-            <div key={image.id} className="relative">
-              <img src={image.imageUrl} alt={image.altText || ''} className="rounded-md aspect-video object-cover" />
-              <Button variant="destructive" size="sm" className="absolute top-2 right-2" onClick={() => handleRemoveImage(image.id)}>Elimina</Button>
+            <div key={image.id} className="flex gap-4 items-start border p-4 rounded-md">
+              <img src={image.imageUrl} alt={image.altText || ''} className="rounded-md w-48 h-24 object-cover" />
+              <div className="flex-grow space-y-2">
+                <Input
+                  placeholder="Titolo (opzionale)"
+                  value={image.title || ''}
+                  onChange={(e) => handleTextChange(image.id, 'title', e.target.value)}
+                />
+                <Input
+                  placeholder="Sottotitolo (opzionale)"
+                  value={image.subtitle || ''}
+                  onChange={(e) => handleTextChange(image.id, 'subtitle', e.target.value)}
+                />
+              </div>
+              <Button variant="destructive" size="sm" onClick={() => handleRemoveImage(image.id)}>Elimina</Button>
             </div>
           ))}
         </div>

@@ -59,7 +59,7 @@ export function NuovoViaggioClientPage({ teamMembers }: NuovoViaggioClientPagePr
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Crea Nuovo Viaggio</h1>
+      <h1 className="font-heading text-3xl font-bold mb-6">Crea Nuovo Viaggio</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSave)} className="space-y-8">
           {/* Passa la lista dei team members al form */}

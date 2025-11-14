@@ -33,7 +33,7 @@ export default async function ChiSiamoPage() {
       {/* Sezione Introduttiva */}
       <section className="bg-gray-50 py-20">
         <div className="container text-center">
-          <h1 className="text-4xl font-bold">Chi Siamo</h1>
+          <h1 className="font-heading text-4xl font-bold">Chi Siamo</h1>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
             Oltre non è solo un'agenzia di viaggi. È un'idea, una passione condivisa per l'esplorazione autentica e la scoperta di angoli di mondo che ancora sanno sorprendere. Nasciamo dalla voglia di creare esperienze che lascino il segno, connettendo persone, culture e storie.
           </p>

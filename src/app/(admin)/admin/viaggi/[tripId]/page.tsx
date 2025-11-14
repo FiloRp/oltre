@@ -32,7 +32,7 @@ export default async function EditTripPage({ params }: EditTripPageProps) {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Modifica Viaggio</h1>
+      <h1 className="font-heading text-3xl font-bold mb-6">Modifica Viaggio</h1>
       <EditTripClientPage tripJson={tripJson} teamMembers={teamMembers} />
     </div>
   );

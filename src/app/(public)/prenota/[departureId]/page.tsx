@@ -30,7 +30,7 @@ export default async function PrenotaPage({ params: paramsPromise }: PrenotaPage
     <div className="container py-12">
       <div className="mb-8">
         <p className="text-sm text-gray-500">Stai prenotando:</p>
-        <h1 className="text-4xl font-bold">{departure.trip.title}</h1>
+        <h1 className="font-heading text-4xl font-bold">{departure.trip.title}</h1>
         <p className="text-lg text-gray-600">Partenza del {new Date(departure.startDate).toLocaleDateString('it-IT')}</p>
       </div>
       

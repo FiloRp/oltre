@@ -9,7 +9,7 @@ export default function TestEditorPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Pagina di Test per l'Editor</h1>
+      <h1 className="font-heading text-2xl font-bold mb-4">Pagina di Test per l'Editor</h1>
       <p className="mb-2">Se vedi l'editor qui sotto, il componente funziona correttamente.</p>
       
       <RichTextEditor value={content} onChange={setContent} />

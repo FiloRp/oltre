@@ -6,7 +6,11 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 const schema = z.object({
-  images: z.array(z.object({ imageUrl: z.string().url() })),
+  images: z.array(z.object({
+    imageUrl: z.string().url(),
+    title: z.string().nullable().optional(),
+    subtitle: z.string().nullable().optional(),
+  })),
 });
 
 export async function POST(request: Request) {
@@ -23,15 +27,17 @@ export async function POST(request: Request) {
 
   try {
     await prisma.$transaction(async (tx) => {
-      // 1. Cancella tutte le immagini esistenti
       await tx.homeCarouselImage.deleteMany();
-      // 2. Crea le nuove immagini con il nuovo ordine
-      await tx.homeCarouselImage.createMany({
-        data: parsedData.data.images.map((image, index) => ({
-          imageUrl: image.imageUrl,
-          order: index,
-        })),
-      });
+      if (parsedData.data.images.length > 0) {
+        await tx.homeCarouselImage.createMany({
+          data: parsedData.data.images.map((image, index) => ({
+            imageUrl: image.imageUrl,
+            title: image.title,
+            subtitle: image.subtitle,
+            order: index,
+          })),
+        });
+      }
     });
     return NextResponse.json({ success: true });
   } catch (error) {

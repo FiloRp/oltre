@@ -12,6 +12,7 @@ const reviewSchema = z.object({
   userPhotoUrl: z.string().url("URL foto non valido").or(z.literal("")).optional().nullable(),
   trustpilotUrl: z.string().url("URL Trustpilot non valido").or(z.literal("")).optional().nullable(),
   rating: z.number().min(1).max(5),
+  isFeatured: z.boolean().default(false),
 });
 
 interface RouteContext { params: { reviewId: string } }

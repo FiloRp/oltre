@@ -25,7 +25,7 @@ export default async function PrenotazioniPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Gestione Prenotazioni</h1>
+        <h1 className="font-heading text-3xl font-bold">Gestione Prenotazioni</h1>
       </div>
 
       <div className="rounded-lg border">

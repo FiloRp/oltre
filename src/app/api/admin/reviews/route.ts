@@ -10,6 +10,7 @@ const reviewSchema = z.object({
   userName: z.string().min(2, 'Il nome utente è richiesto'),
   reviewText: z.string().min(10, 'Il testo della recensione è troppo corto'),
   rating: z.number().min(1).max(5),
+  isFeatured: z.boolean().default(false),
   userPhotoUrl: z.string().url("URL foto non valido").or(z.literal("")).optional().nullable(),
   trustpilotUrl: z.string().url("URL Trustpilot non valido").or(z.literal("")).optional().nullable(),
 });
